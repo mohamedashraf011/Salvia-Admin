@@ -1,76 +1,51 @@
 import React, { useState, useEffect } from "react";
 import FixedSidebar from "../../Components/FixedSidebar";
 import { useNavigate, useParams } from "react-router-dom";
+import axios from 'axios';
+import { base_url } from "../../utils/Domain";
 
 function Preview() {
   const navigate = useNavigate();
   const { blockId } = useParams();
-
-  // Mock data - In production, this will come from API
-  const allBlocksData = {
-    1: {
-      sectionTitle: "Our Mission",
-      description:
-        "Our mission is to deliver products that combine authenticity, purity, and consistency. Every step of our process - from carefully selecting raw materials at the farm level, to applying rigorous processing and quality control measures - is designed to meet international food safety and quality standards.",
-    },
-    2: {
-      sectionTitle: "Sustainability & Community",
-      description:
-        "We are committed to sustainable farming practices and building strong relationships with local communities. Our approach ensures that we support the livelihoods of farmers while protecting the environment for future generations.",
-    },
-    3: {
-      sectionTitle: "Our Reputation",
-      description:
-        "Built on trust and excellence, our reputation speaks for itself. We have established long-term partnerships with clients worldwide who rely on us for consistently high-quality natural products.",
-    },
-    4: {
-      sectionTitle: "Our Vision",
-      description:
-        "Our vision is to become the leading global supplier of premium dried herbs and botanicals, recognized for our commitment to quality, sustainability, and innovation in the natural products industry.",
-    },
-  };
 
   const [sectionData, setSectionData] = useState({
     sectionTitle: "",
     description: "",
   });
 
-  // Load data based on blockId
+  // Load data from API based on blockId
   useEffect(() => {
-    const blockData = allBlocksData[blockId];
-    if (blockData) {
-      setSectionData(blockData);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const fetchSection = async () => {
+      try {
+        const res = await axios.get(`${base_url}/api/about-us/sections`);
+        const sections = (res.data && res.data.sections) || [];
+        const target = sections.find((s) => String(s._id) === String(blockId));
+        if (target) {
+          setSectionData({ sectionTitle: target.name, description: target.details });
+        }
+      } catch (error) {
+        console.error('Error loading section:', error);
+      }
+    };
+    fetchSection();
   }, [blockId]);
 
-  // TODO: Fetch data from API - uncomment when API is ready
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get(`YOUR_API_ENDPOINT_HERE/${blockId}`);
-  //       setSectionData(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [blockId]);
-
-  const handleSave = () => {
-    // TODO: Save data to API
-    // const saveData = async () => {
-    //   try {
-    //     await axios.put(`YOUR_API_ENDPOINT_HERE/${blockId}`, sectionData);
-    //     alert('Changes saved successfully!');
-    //     navigate('/about');
-    //   } catch (error) {
-    //     console.error('Error saving data:', error);
-    //   }
-    // };
-    // saveData();
-    console.log("Saving data:", sectionData);
-    navigate("/about");
+  const handleSave = async () => {
+    try {
+      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZGVmMGYzMjk4MTNkMDFhN2QwYmRiZSIsImlhdCI6MTc2MjE5NzM4NywiZXhwIjoxNzYyMjAwOTg3fQ.boYzJFomxORLkZkVHZgRmxNgm3I0-p9Qc9SzFpSlLWU';
+      await axios.put(
+        `${base_url}/api/about-us/section`,
+        {
+          sectionId: blockId,
+          sectionName: sectionData.sectionTitle,
+          newDetails: sectionData.description,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      navigate("/about");
+    } catch (error) {
+      console.error('Error saving section:', error);
+    }
   };
 
   const handleCancel = () => {

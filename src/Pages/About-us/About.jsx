@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import FixedSidebar from "../../Components/FixedSidebar";
 import Delete from "../../Components/Delete";
 import { useNavigate } from "react-router-dom";
 import { base_url } from "../../utils/Domain";
+import axios from 'axios';
 
 function About() {
   const navigate = useNavigate();
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedBlock, setSelectedBlock] = useState(null);
 
   const [pageData, setPageData] = useState({
@@ -51,60 +51,48 @@ function About() {
     navigate(`/preview/${blockId}`);
   };
 
-  const handleDeleteClick = (block) => {
-    setSelectedBlock(block);
-    setDeleteModalOpen(true);
-  };
+  useEffect(() => {
+    const fetchAboutData = async () => {
+      try {
+        const [pageRes, sectionsRes] = await Promise.all([
+          axios.get(`${base_url}/api/about-us/page`),
+          axios.get(`${base_url}/api/about-us/sections`)
+        ]);
 
-  const handleDeleteConfirm = () => {
-    if (selectedBlock) {
-      // TODO: Delete from API
-      // const deleteBlock = async () => {
-      //   try {
-      //     await axios.delete(`YOUR_API_ENDPOINT_HERE/${selectedBlock.id}`);
-      //     setPageData({
-      //       ...pageData,
-      //       contentBlocks: pageData.contentBlocks.filter(
-      //         (block) => block.id !== selectedBlock.id
-      //       ),
-      //     });
-      //     setDeleteModalOpen(false);
-      //   } catch (error) {
-      //     console.error('Error deleting block:', error);
-      //   }
-      // };
-      // deleteBlock();
+        const page = pageRes.data || {};
+        const sections = (sectionsRes.data && sectionsRes.data.sections) || [];
 
-      // Remove from local state
-      setPageData({
-        ...pageData,
-        contentBlocks: pageData.contentBlocks.filter(
-          (block) => block.id !== selectedBlock.id
-        ),
-      });
-      setDeleteModalOpen(false);
+        setPageData({
+          pageTitle: page.pageTitle || "About Us",
+          introTitle: "Intro tittle",
+          introText: page.intro || "",
+          contentBlocks: sections.map((sec) => ({
+            id: sec._id,
+            title: sec.name,
+            sectionTitle: sec.name,
+            description: sec.details,
+          })),
+        });
+      } catch (error) {
+        console.error('Error fetching About Us data:', error);
+      }
+    };
+    fetchAboutData();
+  }, []);
+
+  const handleSaveIntro = async () => {
+    try {
+      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZGVmMGYzMjk4MTNkMDFhN2QwYmRiZSIsImlhdCI6MTc2MjE5NzM4NywiZXhwIjoxNzYyMjAwOTg3fQ.boYzJFomxORLkZkVHZgRmxNgm3I0-p9Qc9SzFpSlLWU';
+      await axios.put(
+        `${base_url}/api/about-us/page`,
+        { pageTitle: pageData.pageTitle, intro: pageData.introText },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      // Optionally, show a toast or message
+    } catch (error) {
+      console.error('Error saving About Us page:', error);
     }
   };
-
-  const handleDeleteCancel = () => {
-    setDeleteModalOpen(false);
-    setSelectedBlock(null);
-  };
-
-  // TODO: Fetch data from API - uncomment when API is ready
-  // import axios from 'axios';
-  // import { useEffect } from 'react';
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get('YOUR_API_ENDPOINT_HERE');
-  //       setPageData(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
 
   return (
     <div className="flex">
@@ -137,6 +125,14 @@ function About() {
             className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#293A23] focus:border-transparent resize-vertical"
             placeholder="Enter intro text"
           />
+          <div className="mt-4">
+            <button
+              onClick={handleSaveIntro}
+              className="px-4 py-2 bg-[#4E6347] text-white rounded-lg hover:bg-[#5a7353] transition-colors font-semibold cursor-pointer"
+            >
+              Save Changes
+            </button>
+          </div>
         </div>
 
         {/* Content Blocks Grid */}
@@ -156,24 +152,11 @@ function About() {
                 >
                   <FaEdit className="text-lg" />
                 </button>
-                <button
-                  onClick={() => handleDeleteClick(block)}
-                  className="text-gray-600 hover:text-red-600 transition-colors cursor-pointer"
-                >
-                  <FaTrash className="text-lg" />
-                </button>
               </div>
             </div>
           ))}
         </div>
       </div>
-
-      {/* Delete Modal */}
-      <Delete
-        isOpen={deleteModalOpen}
-        onClose={handleDeleteCancel}
-        onConfirm={handleDeleteConfirm}
-      />
     </div>
   );
 }
