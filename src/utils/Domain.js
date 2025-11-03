@@ -1,0 +1,1 @@
+export const base_url = "http://api.mahmoud-alsoudy.space";
