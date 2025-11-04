@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { FaBars } from 'react-icons/fa';
-// import Sidebar from '../../Components/Sidebar';
 import FixedSidebar from "../../Components/FixedSidebar";
 import skyVideo from '../../assets/videos/sky.mp4';
 import soilImage from '../../assets/images/soil.png';
