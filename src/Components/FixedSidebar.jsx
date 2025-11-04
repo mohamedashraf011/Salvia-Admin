@@ -27,15 +27,17 @@ function FixedSidebar({ isOpen, onClose }) {
 
   return (
     <>
-      {typeof isOpen !== "undefined" && sidebarOpen && (
+      {typeof isOpen !== "undefined" && (
         <div
-          className="fixed inset-0 bg-black/30 backdrop-blur-[1px] z-40"
+          className={`fixed inset-0 bg-black/30 backdrop-blur-[1px] z-40 transition-opacity duration-500 ${
+            sidebarOpen ? "opacity-100 visible" : "opacity-0 invisible"
+          }`}
           onClick={onClose}
         ></div>
       )}
 
       <div
-        className={`fixed left-0 top-0 h-full w-[260px] bg-[#293A23] text-white shadow-xl z-50 transform transition-transform duration-300 ${
+        className={`fixed left-0 top-0 h-full w-[260px] bg-[#293A23] text-white shadow-xl z-50 transform transition-transform duration-500 ease-in-out ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -71,7 +73,7 @@ function FixedSidebar({ isOpen, onClose }) {
             <img
               src={accountImage}
               alt="Profile Picture"
-              className="rounded-full object-cover"
+              className="rounded-full object-cover w-10 h-10"
             />
             <div>
               <p className="text-sm font-semibold">Mohamed Mohamady</p>
