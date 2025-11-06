@@ -41,7 +41,8 @@ export default function Page9() {
             </h2>
             <input
               type="text"
-              defaultValue="Page 9"
+              value="Page 9"
+              disabled
               className="w-[60%] px-4 py-2 bg-white border border-gray-300 rounded-md cursor-not-allowed"
             />
           </div>

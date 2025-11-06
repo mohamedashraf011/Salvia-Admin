@@ -41,7 +41,8 @@ export default function Page10() {
             </h2>
             <input
               type="text"
-              defaultValue="Page 10"
+              value="Page 10"
+              disabled
               className="w-[60%] px-4 py-2 bg-white border border-gray-300 rounded-md cursor-not-allowed"
             />
           </div>
