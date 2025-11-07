@@ -1,6 +1,6 @@
 import { FaTimes } from "react-icons/fa";
 
-function Delete({ isOpen, onClose, onConfirm }) {
+function Delete({ isOpen, onClose, onConfirm, itemName = "this item" }) {
   if (!isOpen) return null;
 
   const handleOverlayClick = (e) => {
@@ -27,7 +27,7 @@ function Delete({ isOpen, onClose, onConfirm }) {
             Are You Sure
           </h2>
           <p className="text-xl text-gray-700 mb-8">
-            that You want remove this section
+            that you want to remove {itemName}?
           </p>
 
           <div className="flex justify-center">
@@ -39,7 +39,7 @@ function Delete({ isOpen, onClose, onConfirm }) {
             </button>
             <button
               onClick={onConfirm}
-              className="flex-1 py-2 bg-white cursor-pointer"
+              className="flex-1 py-2 bg-white text-black transition-colors font-semibold cursor-pointer"
             >
               YES
             </button>

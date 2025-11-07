@@ -76,55 +76,63 @@ function Event() {
     <div className="flex">
       <FixedSidebar />
       <div className="flex-1 ml-[260px] bg-gray-100 min-h-screen p-14">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Events</h1>
-            <Link
-              to="/add-event"
-              className="bg-[#4E6347] hover:bg-[#3a5230] text-white px-6 py-2 rounded-lg font-medium transition-colors"
-            >
-              Add New Event
-            </Link>
+        <div className="flex justify-between items-center mb-8">
+          <div className="w-1/2">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-3">
+              Page title
+            </h2>
+            <input
+              type="text"
+              value="Events"
+              readOnly
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg cursor-not-allowed"
+            />
           </div>
+          <Link
+            to="/add-event"
+            className="bg-[#4E6347] hover:bg-[#3a5230] text-white px-6 py-2 rounded-lg font-medium transition-colors"
+          >
+            Add New Event
+          </Link>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.map((event) => (
-              <div
-                key={event.id}
-                className="bg-[#F4FFF0] rounded-md shadow-md flex flex-col overflow-hidden hover:shadow-lg hover:bg-[#ECFFE5] transition-shadow duration-300"
-                onClick={() => handleCardClick(event.id)}
-              >
-                <div className="p-6 flex flex-col">
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="w-full h-48 object-cover rounded-xl mb-4"
-                  />
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center justify-between">
-                    <span>{event.title}</span>
-                    <MdOutlineArrowOutward className="text-2xl text-green-600 shrink-0 ml-3" />
-                  </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {events.map((event) => (
+            <div
+              key={event.id}
+              className="bg-[#F4FFF0] rounded-md shadow-md flex flex-col overflow-hidden hover:shadow-lg hover:bg-[#ECFFE5] transition-shadow duration-300"
+              onClick={() => handleCardClick(event.id)}
+            >
+              <div className="p-6 flex flex-col">
+                <img
+                  src={event.image}
+                  alt={event.title}
+                  className="w-full h-48 object-cover rounded-xl mb-4"
+                />
+                <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center justify-between">
+                  <span>{event.title}</span>
+                  <MdOutlineArrowOutward className="text-2xl text-green-600 shrink-0 ml-3" />
+                </h3>
 
-                  <div className="flex justify-end gap-3 pt-6 ">
-                    <Link
-                      to={`/edit-event/${event.id}`}
-                      className="bg-[#4E6347] hover:bg-[#3a5230] text-white p-2 rounded-full transition-colors duration-200 cursor-pointer"
-                      title="Edit Event"
-                    >
-                      <FaRegEdit className="w-4 h-4" />
-                    </Link>
-                    <button
-                      onClick={() => handleDeleteClick(event)}
-                      className="bg-[#4E6347] hover:bg-[#3a5230] text-white p-2 rounded-full transition-colors duration-200 cursor-pointer"
-                      title="Delete Event"
-                    >
-                      <RiDeleteBin6Line className="w-4 h-4" />
-                    </button>
-                  </div>
+                <div className="flex justify-end gap-3 pt-6">
+                  <Link
+                    to={`/edit-event/${event.id}`}
+                    className="bg-[#4E6347] hover:bg-[#3a5230] text-white p-2 rounded-full transition-colors duration-200 cursor-pointer"
+                    title="Edit Event"
+                  >
+                    <FaRegEdit className="w-4 h-4" />
+                  </Link>
+                  <button
+                    onClick={() => handleDeleteClick(event)}
+                    className="bg-[#4E6347] hover:bg-[#3a5230] text-white p-2 rounded-full transition-colors duration-200 cursor-pointer"
+                    title="Delete Event"
+                  >
+                    <RiDeleteBin6Line className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
 

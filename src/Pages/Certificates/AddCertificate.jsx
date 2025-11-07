@@ -66,7 +66,6 @@ function AddCertificate() {
         <div className="p-8">
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              {/* LEFT SIDE INPUTS */}
               <div className="space-y-6">
                 <div>
                   <label className="block text-md font-medium text-gray-700 mb-2">
@@ -111,7 +110,6 @@ function AddCertificate() {
                 </div>
               </div>
 
-              {/* RIGHT SIDE IMAGE UPLOAD */}
               <div>
                 <label className="block text-md font-medium text-gray-700 mb-2">
                   Image
@@ -164,7 +162,6 @@ function AddCertificate() {
               </div>
             </div>
 
-            {/* BUTTONS */}
             <div className="flex justify-center gap-4 pt-20">
               <button
                 type="submit"
