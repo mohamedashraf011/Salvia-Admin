@@ -31,7 +31,6 @@ function Event() {
 
   const handleCardClick = (id) => {
     console.log("Clicked event id:", id);
-    // navigate(`/event/${id}`);
   };
 
   const events = [
@@ -103,7 +102,7 @@ function Event() {
                   />
                   <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center justify-between">
                     <span>{event.title}</span>
-                    <MdOutlineArrowOutward className="text-2xl text-green-600 flex-shrink-0 ml-3" />
+                    <MdOutlineArrowOutward className="text-2xl text-green-600 shrink-0 ml-3" />
                   </h3>
 
                   <div className="flex justify-end gap-3 pt-6 ">
