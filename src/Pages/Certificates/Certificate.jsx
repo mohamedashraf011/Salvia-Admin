@@ -59,7 +59,7 @@ function Certificate() {
     <div className="flex">
       <FixedSidebar />
       <div className="flex-1 ml-[260px] bg-gray-100 min-h-screen p-14">
-        <div className="flex justify-between items-center mb-8 flex-wrap">
+        <div className="flex justify-between items-center mb-8">
           <div className="w-1/2">
             <h2 className="text-2xl font-semibold text-gray-800 mb-3">
               Page title
@@ -71,7 +71,6 @@ function Certificate() {
               className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg cursor-not-allowed"
             />
           </div>
-
           <Link
             to="/add-certificate"
             className="bg-[#4E6347] text-white px-4 py-2 rounded-md"

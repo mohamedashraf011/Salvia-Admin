@@ -65,7 +65,6 @@ function EditCertificate() {
         <div className="p-8">
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              {/* LEFT SIDE */}
               <div className="space-y-6">
                 <div>
                   <label className="block text-md font-medium text-gray-700 mb-2">
@@ -110,7 +109,6 @@ function EditCertificate() {
                 </div>
               </div>
 
-              {/* RIGHT SIDE */}
               <div>
                 <label className="block text-md font-medium text-gray-700 mb-2">
                   Certificate Image
@@ -135,19 +133,6 @@ function EditCertificate() {
                         alt="Preview"
                         className="max-h-72 rounded-lg object-contain"
                       />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPreview(null);
-                          setFormData((prev) => ({
-                            ...prev,
-                            certificateImage: null,
-                          }));
-                        }}
-                        className="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-sm px-2 py-1 rounded"
-                      >
-                        Remove
-                      </button>
                     </div>
                   ) : (
                     <label htmlFor="certificate-image" className="cursor-pointer">

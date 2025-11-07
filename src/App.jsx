@@ -13,6 +13,9 @@ import Page10 from "./Pages/Page-10/Page10";
 import Certificate from "./Pages/Certificates/Certificate";
 import AddCertificate from "./Pages/Certificates/AddCertificate";
 import EditCertificate from "./Pages/Certificates/EditCertificate";
+import Events from "./Pages/Events/Event";
+import AddEvent from "./Pages/Events/AddEvent";
+import EditEvent from "./Pages/Events/EditEvent";
 
 
 
@@ -37,6 +40,9 @@ function App() {
           <Route path="/certificates" element={<Certificate />} />
           <Route path="/add-certificate" element={<AddCertificate />} />
           <Route path="/edit-certificate/:id" element={<EditCertificate />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/add-event" element={<AddEvent />} />
+          <Route path="/edit-event/:id" element={<EditEvent />} />
         </Routes>
       </Router>
     </>

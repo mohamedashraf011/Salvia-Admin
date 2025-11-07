@@ -11,8 +11,8 @@ function AddCertificate() {
     certificateImage: null,
   });
 
-  const [preview, setPreview] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [preview, setPreview] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,27 +22,28 @@ function AddCertificate() {
     }));
   };
 
-  const handleFile = (file) => {
-    if (file && file.type.startsWith("image/")) {
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
       setFormData((prev) => ({
         ...prev,
         certificateImage: file,
       }));
       setPreview(URL.createObjectURL(file));
-    } else {
-      alert("Please upload a valid image file (PNG, JPG, GIF).");
     }
-  };
-
-  const handleImageChange = (e) => {
-    handleFile(e.target.files[0]);
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
-    handleFile(file);
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        certificateImage: file,
+      }));
+      setPreview(URL.createObjectURL(file));
+    }
   };
 
   const handleSubmit = (e) => {
@@ -56,7 +57,7 @@ function AddCertificate() {
       <div className="flex-1 ml-[260px] bg-gray-100 min-h-screen p-14">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">
               Add New Certificate
             </h1>
           </div>
@@ -65,6 +66,7 @@ function AddCertificate() {
         <div className="p-8">
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              {/* LEFT SIDE INPUTS */}
               <div className="space-y-6">
                 <div>
                   <label className="block text-md font-medium text-gray-700 mb-2">
@@ -104,14 +106,15 @@ function AddCertificate() {
                     value={formData.expiryDate}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#293A23]"
-                    placeholder="Type Expired date"
+                    placeholder="Type Expiry date"
                   />
                 </div>
               </div>
 
+              {/* RIGHT SIDE IMAGE UPLOAD */}
               <div>
                 <label className="block text-md font-medium text-gray-700 mb-2">
-                  Certificate Image
+                  Image
                 </label>
                 <div
                   className={`border-2 border-dashed rounded-lg text-center bg-white transition-colors h-full flex items-center justify-center ${
@@ -135,10 +138,7 @@ function AddCertificate() {
                       />
                     </div>
                   ) : (
-                    <label
-                      htmlFor="certificate-image"
-                      className="cursor-pointer"
-                    >
+                    <label htmlFor="certificate-image" className="cursor-pointer">
                       <input
                         type="file"
                         accept="image/*"
@@ -164,7 +164,8 @@ function AddCertificate() {
               </div>
             </div>
 
-            <div className="flex justify-center gap-5 pt-20">
+            {/* BUTTONS */}
+            <div className="flex justify-center gap-4 pt-20">
               <button
                 type="submit"
                 className="bg-[#4E6347] hover:bg-[#3a5230] text-white px-8 py-2 rounded-lg font-medium transition-colors cursor-pointer"
