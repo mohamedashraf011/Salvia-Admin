@@ -14,7 +14,7 @@ function FixedSidebar({ isOpen, onClose }) {
 
   const links = [
     { to: "/about", label: "About Us", icon: <PiPlantLight /> },
-    { to: "/product", label: "Our Products", icon: <BsBoxSeam /> },
+    { to: "/products", label: "Our Products", icon: <BsBoxSeam /> },
     { to: "/our-quality", label: "Our Quality Co.", icon: <PiPlantLight /> },
     { to: "/r-and-d", label: "R&D", icon: <ImLab /> },
     { to: "/gallary", label: "Gallery", icon: <TbPhotoCog /> },

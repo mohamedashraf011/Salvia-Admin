@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./Pages/Home/Home";
 import About from "./Pages/About-us/About";
 import Preview from "./Pages/About-us/Preview";
+import Product from "./Pages/Products/Product";
 
 
 import Quality from "./Pages/Our-Quality-Commitment/Quality";
@@ -29,6 +30,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/preview/:blockId" element={<Preview />} />
+          <Route path="/products" element={<Product />} />
 
 
           <Route path="/our-quality" element={<Quality />} />
