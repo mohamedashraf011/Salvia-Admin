@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import FixedSidebar from "../../Components/FixedSidebar";
-import { toast } from "../../components/ui/sonner";
+import { toast } from "../../Components/ui/sonner";
 import { base_url } from "../../utils/Domain";
 
 export default function Contact() {
@@ -20,9 +20,7 @@ export default function Contact() {
 
   const fetchContactData = async () => {
     try {
-      const response = await fetch(
-        `${base_url}/api/contact-us/site-info`
-      );
+      const response = await fetch(`${base_url}/api/contact-us/site-info`);
       const data = await response.json();
       setFormData({
         pageTitle: data.pageTitle,
@@ -48,17 +46,14 @@ export default function Contact() {
     setSaving(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${base_url}/api/contact-us/site-info`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch(`${base_url}/api/contact-us/site-info`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
 
       if (response.ok) {
         toast.success("Contact information updated successfully");

@@ -27,7 +27,7 @@ import EditCertificate from "./Pages/Certificates/EditCertificate";
 import Page9 from "./Pages/Page-9/Page9";
 import Page10 from "./Pages/Page-10/Page10";
 import Login from "./Pages/Login";
-import { Toaster } from "./components/ui/sonner";
+import { Toaster } from "./Components/ui/sonner";
 
 // Protected Route Component
 function ProtectedRoute({ children }) {
