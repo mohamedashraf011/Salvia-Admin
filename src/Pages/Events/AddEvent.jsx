@@ -4,6 +4,7 @@ import FixedSidebar from "../../Components/FixedSidebar";
 import { FiUploadCloud } from "react-icons/fi";
 import axios from "axios";
 import { base_url } from "../../utils/Domain";
+import { toast } from "../../Components/ui/sonner";
 
 function AddEvent() {
   const navigate = useNavigate();
@@ -20,7 +21,6 @@ function AddEvent() {
   const [dragActive, setDragActive] = useState(false);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
@@ -98,13 +98,12 @@ function AddEvent() {
     e.preventDefault();
 
     if (!validateForm()) {
-      setError("Please fill in all required fields");
+      toast.error("Please fill in all required fields");
       return;
     }
 
     try {
       setLoading(true);
-      setError(null);
 
       const token = localStorage.getItem("token");
       const formDataToSend = new FormData();
@@ -127,9 +126,12 @@ function AddEvent() {
         },
       });
 
-      navigate("/events");
+      toast.success("Event created successfully!");
+      setTimeout(() => {
+        navigate("/events");
+      }, 1000);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to create event");
+      toast.error(err.response?.data?.message || "Failed to create event");
       console.error("Error creating event:", err);
     } finally {
       setLoading(false);
@@ -145,12 +147,6 @@ function AddEvent() {
             Add New Event
           </h1>
         </div>
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-            {error}
-          </div>
-        )}
 
         <div className="">
           <form onSubmit={handleSubmit}>

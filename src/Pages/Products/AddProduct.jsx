@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import FixedSidebar from "../../Components/FixedSidebar";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { base_url } from "../../utils/Domain";
+import { toast } from "../../Components/ui/sonner";
 
 const AddProduct = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -11,6 +13,7 @@ const AddProduct = () => {
     image: null,
   });
   const [imagePreview, setImagePreview] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,34 +36,54 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.name.trim()) {
+      toast.error("Please enter a product name");
+      return;
+    }
+
+    if (!formData.description.trim()) {
+      toast.error("Please enter a product description");
+      return;
+    }
+
+    if (!formData.image) {
+      toast.error("Please upload a product image");
+      return;
+    }
+
+    setLoading(true);
     const data = new FormData();
     data.append("name", formData.name);
     data.append("category", formData.category);
     data.append("description", formData.description);
-    if (formData.image) {
-      data.append("image", formData.image);
-    }
+    data.append("image", formData.image);
 
     try {
       const response = await fetch(`${base_url}/api/products`, {
         method: "POST",
         body: data,
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+
       if (!response.ok) {
         const errorData = await response.json();
-        alert("Error: " + (errorData.message || "Failed to add product"));
+        toast.error(errorData.message || "Failed to add product");
         return;
       }
+
       const result = await response.json();
-      alert("Product added successfully!");
-      // Optionally reset form or redirect
-      setFormData({ name: "", description: "", category: "", image: null });
-      setImagePreview(null);
+      toast.success("Product added successfully!");
+
+      setTimeout(() => {
+        navigate("/products");
+      }, 1000);
     } catch (err) {
-      alert("Error: " + err.message);
+      toast.error(err.message || "An error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -188,12 +211,21 @@ const AddProduct = () => {
           </div>
 
           {/* Submit Button */}
-          <div className="mt-8 flex justify-end">
+          <div className="mt-8 flex justify-end gap-4">
+            <button
+              type="button"
+              onClick={() => navigate("/products")}
+              disabled={loading}
+              className="text-gray-700 font-medium px-6 py-2 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
+            >
+              Cancel
+            </button>
             <button
               type="submit"
-              className="bg-green-700 hover:bg-green-800 text-white px-8 py-2 rounded-md"
+              disabled={loading}
+              className="bg-green-700 hover:bg-green-800 text-white px-8 py-2 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              ADD
+              {loading ? "Adding..." : "ADD"}
             </button>
           </div>
         </form>

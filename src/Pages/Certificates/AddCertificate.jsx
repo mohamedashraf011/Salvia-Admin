@@ -1,11 +1,13 @@
 import { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import FixedSidebar from "../../Components/FixedSidebar";
 import { FiUploadCloud } from "react-icons/fi";
 import { base_url } from "../../utils/Domain";
+import { toast } from "../../Components/ui/sonner";
 
 function AddCertificate() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     certificateBody: "",
     certificateNumber: "",
@@ -15,9 +17,7 @@ function AddCertificate() {
 
   const [isDragging, setIsDragging] = useState(false);
   const [preview, setPreview] = useState(null);
-
-  const [success, setSuccess] = useState(null);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -53,15 +53,34 @@ function AddCertificate() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSuccess(null);
-    setError(null);
+
+    if (!formData.certificateBody.trim()) {
+      toast.error("Please enter certification body");
+      return;
+    }
+
+    if (!formData.certificateNumber.trim()) {
+      toast.error("Please enter certificate number");
+      return;
+    }
+
+    if (!formData.expiryDate) {
+      toast.error("Please select expiry date");
+      return;
+    }
+
+    if (!formData.image) {
+      toast.error("Please upload certificate image");
+      return;
+    }
+
+    setLoading(true);
     const form = new FormData();
     form.append("certificateBody", formData.certificateBody);
     form.append("certificateNumber", formData.certificateNumber);
     form.append("expiryDate", formData.expiryDate);
-    if (formData.image) {
-      form.append("image", formData.image);
-    }
+    form.append("image", formData.image);
+
     try {
       await axios.post(`${base_url}/api/certificates`, form, {
         headers: {
@@ -69,18 +88,14 @@ function AddCertificate() {
           Authorization: `${localStorage.getItem("token")}`,
         },
       });
-      setSuccess("Certificate added successfully.");
-      setFormData({
-        certificateBody: "",
-        certificateNumber: "",
-        expiryDate: "",
-        image: null,
-      });
-      setPreview(null);
+      toast.success("Certificate added successfully!");
+      setTimeout(() => {
+        navigate("/certificates");
+      }, 1000);
     } catch (err) {
-      setError(
-        "Failed to add certificate. Please check your data and try again."
-      );
+      toast.error(err.response?.data?.message || "Failed to add certificate");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -97,12 +112,6 @@ function AddCertificate() {
         </div>
 
         <div className="p-8">
-          {success && (
-            <div className="text-green-700 text-center py-2">{success}</div>
-          )}
-          {error && (
-            <div className="text-red-700 text-center py-2">{error}</div>
-          )}
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <div className="space-y-6">
@@ -207,16 +216,19 @@ function AddCertificate() {
             <div className="flex justify-center gap-4 pt-20">
               <button
                 type="submit"
-                className="bg-[#4E6347] hover:bg-[#3a5230] text-white px-8 py-2 rounded-lg font-medium transition-colors cursor-pointer"
+                disabled={loading}
+                className="bg-[#4E6347] hover:bg-[#3a5230] text-white px-8 py-2 rounded-lg font-medium transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Save
+                {loading ? "Saving..." : "Save"}
               </button>
-              <Link
-                to="/certificates"
-                className="text-black py-2 px-6 rounded-md cursor-pointer"
+              <button
+                type="button"
+                onClick={() => navigate("/certificates")}
+                disabled={loading}
+                className="text-black py-2 px-6 rounded-md cursor-pointer hover:bg-gray-100 transition-colors disabled:opacity-50"
               >
                 Cancel
-              </Link>
+              </button>
             </div>
           </form>
         </div>
