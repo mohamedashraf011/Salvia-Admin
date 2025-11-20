@@ -1,58 +1,63 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import { FaRegEdit } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Delete from "../../Components/Delete";
 import FixedSidebar from "../../Components/FixedSidebar";
-import anise from "../../assets/images/anise.png";
-import artichoke from "../../assets/images/artichoke.png";
-import basil from "../../assets/images/basil.png";
-import caraway from "../../assets/images/caraway.png";
-
-const Products = [
-  {
-    id: 1,
-    name: "ANISE SEEDS",
-    description: "PIMPINELLA ANISUM",
-    image: anise,
-  },
-  {
-    id: 2,
-    name: "ARTICHOKE",
-    description: "CYNARA SCOLYMUS",
-    image: artichoke,
-  },
-  {
-    id: 3,
-    name: "BASIL",
-    description: "OCIMUM BASILICUM",
-    image: basil,
-  },
-  {
-    id: 4,
-    name: "CARAWAY SEEDS",
-    description: "MATRICARIA CHAMOMILLA",
-    image: caraway,
-  },
-];
+import { base_url } from "../../utils/Domain";
 
 export default function Product() {
-  const [products, setProducts] = useState(Products);
+  const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await axios.get(`${base_url}/api/products`);
+        setProducts(res.data.products || []);
+      } catch (err) {
+        setError("Failed to load products. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   const filteredProducts = products.filter(
     (product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchTerm.toLowerCase())
+      product.shortDescription
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      product.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDelete = (productId) => {
-    setProducts(products.filter((product) => product.id !== productId));
-    setShowDeleteModal(false);
+  const handleDelete = async (productId) => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      await axios.delete(`${base_url}/api/products/${productId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProducts(products.filter((product) => product._id !== productId));
+      setShowDeleteModal(false);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to delete product");
+      console.error("Error deleting product:", err);
+      setShowDeleteModal(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const openDeleteModal = (product) => {
@@ -65,29 +70,60 @@ export default function Product() {
   };
 
   const handleEditProduct = (productId) => {
+    console.log("Editing product with ID:", productId);
     navigate(`/edit-product/${productId}`);
   };
+
+  if (loading) {
+    return (
+      <div className="flex">
+        <FixedSidebar />
+        <div className="flex-1 ml-[180px] p-5 md:ml-[260px] bg-gray-100 min-h-screen md:p-14 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4E6347] mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading products...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex">
+        <FixedSidebar />
+        <div className="flex-1 ml-[260px] bg-gray-100 min-h-screen p-14 flex items-center justify-center">
+          <div className="text-center">
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+              <p className="font-semibold">Error</p>
+              <p>{error}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex">
       <FixedSidebar />
 
-      <div className="flex-1 ml-[260px] bg-gray-100 min-h-screen p-14">
-        <div className="flex justify-between items-center mb-8">
-          <div className="w-1/2">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-3">
+      <div className="flex-1 ml-[180px] md:ml-[260px] p-5 md:p-14 bg-gray-100 min-h-screen">
+        <div className="flex justify-between flex-col md:flex-row items-center mb-8">
+          <div className="md:w-1/2 flex md:block">
+            <h2 className="text-xl md:text-2xl w-25 md:w-auto font-semibold text-gray-800 mb-3">
               Page title
             </h2>
             <input
               type="text"
               value="Products"
               readOnly
-              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg cursor-not-allowed"
+              className="md:w-full px-1 py-0 md:px-3 md:py-2 bg-white border border-gray-300 rounded-lg cursor-not-allowed"
             />
           </div>
           <button
             onClick={handleAddProduct}
-            className="flex items-center gap-2 bg-[#4E6347] text-white px-4 py-2 rounded-lg hover:bg-[#3a5230] transition-colors cursor-pointer"
+            className="flex items-center gap-2 bg-[#4E6347] text-white px-4 py-2 rounded-lg hover:bg-[#3a5230] transition-colors cursor-pointer mt-4 md:mt-0"
           >
             Add New Product
           </button>
@@ -109,12 +145,12 @@ export default function Product() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
           {filteredProducts.map((product) => (
             <div
-              key={product.id}
+              key={product._id}
               className="relative group bg-white rounded-3xl shadow-md overflow-hidden flex flex-col items-center border border-gray-200 hover:shadow-lg hover:scale-[1.02] transition-all duration-300"
             >
               <div className="absolute top-3 right-3 flex gap-2 transition-opacity">
                 <button
-                  onClick={() => handleEditProduct(product.id)}
+                  onClick={() => handleEditProduct(product._id)}
                   className="bg-[#4E6347] hover:bg-[#3a5230] rounded-full p-2 transition-colors"
                 >
                   <FaRegEdit className="text-md text-white cursor-pointer" />
@@ -132,6 +168,9 @@ export default function Product() {
                   src={product.image}
                   alt={product.name}
                   className="h-46 w-auto object-contain"
+                  onError={(e) => {
+                    e.target.src = "";
+                  }}
                 />
               </div>
 
@@ -140,7 +179,7 @@ export default function Product() {
                   {product.name}
                 </h3>
                 <p className="font-light italic tracking-wide mt-1 opacity-95 text-sm">
-                  {product.description}
+                  {product.shortDescription || product.description}
                 </p>
               </div>
             </div>
@@ -160,7 +199,7 @@ export default function Product() {
       <Delete
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
-        onConfirm={() => handleDelete(selectedProduct?.id)}
+        onConfirm={() => handleDelete(selectedProduct?._id)}
         itemName={`"${selectedProduct?.name}"`}
       />
     </div>

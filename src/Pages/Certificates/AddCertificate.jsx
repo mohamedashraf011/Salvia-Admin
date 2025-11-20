@@ -1,18 +1,23 @@
 import { useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import FixedSidebar from "../../Components/FixedSidebar";
 import { FiUploadCloud } from "react-icons/fi";
+import { base_url } from "../../utils/Domain";
 
 function AddCertificate() {
   const [formData, setFormData] = useState({
-    certificationBody: "",
+    certificateBody: "",
     certificateNumber: "",
     expiryDate: "",
-    certificateImage: null,
+    image: null,
   });
 
   const [isDragging, setIsDragging] = useState(false);
   const [preview, setPreview] = useState(null);
+
+  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -27,7 +32,7 @@ function AddCertificate() {
     if (file) {
       setFormData((prev) => ({
         ...prev,
-        certificateImage: file,
+        image: file,
       }));
       setPreview(URL.createObjectURL(file));
     }
@@ -40,21 +45,49 @@ function AddCertificate() {
     if (file) {
       setFormData((prev) => ({
         ...prev,
-        certificateImage: file,
+        image: file,
       }));
       setPreview(URL.createObjectURL(file));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    setSuccess(null);
+    setError(null);
+    const form = new FormData();
+    form.append("certificateBody", formData.certificateBody);
+    form.append("certificateNumber", formData.certificateNumber);
+    form.append("expiryDate", formData.expiryDate);
+    if (formData.image) {
+      form.append("image", formData.image);
+    }
+    try {
+      await axios.post(`${base_url}/api/certificates`, form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `${localStorage.getItem("token")}`,
+        },
+      });
+      setSuccess("Certificate added successfully.");
+      setFormData({
+        certificateBody: "",
+        certificateNumber: "",
+        expiryDate: "",
+        image: null,
+      });
+      setPreview(null);
+    } catch (err) {
+      setError(
+        "Failed to add certificate. Please check your data and try again."
+      );
+    }
   };
 
   return (
     <div className="flex">
       <FixedSidebar />
-      <div className="flex-1 ml-[260px] bg-gray-100 min-h-screen p-14">
+      <div className="flex-1 ml-[180px] md:ml-[260px] p-5 md:p-14 bg-gray-100 min-h-screen">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">
@@ -64,6 +97,12 @@ function AddCertificate() {
         </div>
 
         <div className="p-8">
+          {success && (
+            <div className="text-green-700 text-center py-2">{success}</div>
+          )}
+          {error && (
+            <div className="text-red-700 text-center py-2">{error}</div>
+          )}
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <div className="space-y-6">
@@ -73,8 +112,8 @@ function AddCertificate() {
                   </label>
                   <input
                     type="text"
-                    name="certificationBody"
-                    value={formData.certificationBody}
+                    name="certificateBody"
+                    value={formData.certificateBody || ""}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#293A23]"
                     placeholder="Type Certification body.."
@@ -88,7 +127,7 @@ function AddCertificate() {
                   <input
                     type="text"
                     name="certificateNumber"
-                    value={formData.certificateNumber}
+                    value={formData.certificateNumber || ""}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#293A23]"
                     placeholder="Type Certificate no.."
@@ -102,10 +141,10 @@ function AddCertificate() {
                   <input
                     type="text"
                     name="expiryDate"
-                    value={formData.expiryDate}
+                    value={formData.expiryDate || ""}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#293A23]"
-                    placeholder="Type Expiry date"
+                    placeholder="Use YYYY-MM-DD (e.g., 2026-10-03)"
                   />
                 </div>
               </div>
@@ -136,7 +175,10 @@ function AddCertificate() {
                       />
                     </div>
                   ) : (
-                    <label htmlFor="certificate-image" className="cursor-pointer">
+                    <label
+                      htmlFor="certificate-image"
+                      className="cursor-pointer"
+                    >
                       <input
                         type="file"
                         accept="image/*"

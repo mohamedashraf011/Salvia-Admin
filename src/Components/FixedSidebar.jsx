@@ -35,27 +35,29 @@ function FixedSidebar({ isOpen, onClose }) {
       )}
 
       <div
-        className={`fixed left-0 top-0 h-full w-[260px] bg-[#293A23] text-white shadow-xl z-50 transform transition-transform duration-300 ${
+        className={`fixed left-0 top-0 h-full w-[180px] md:w-[260px] bg-[#293A23] text-white shadow-xl z-50 transform transition-transform duration-300 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex flex-col justify-between h-full px-6 py-6 text-left">
+        <div className="flex flex-col justify-between h-full px-1 md:[px-6] py-6 text-left">
           <div className="mt-4">
-            <img
-              src={logoImage}
-              alt="Salvia Naturals Logo"
-              className="w-32 h-auto object-contain"
-            />
+            <Link to="/">
+              <img
+                src={logoImage}
+                alt="Salvia Naturals Logo"
+                className="w-32 h-auto object-contain"
+              />
+            </Link>
           </div>
 
-          <ul className="flex flex-col gap-5 text-lg font-light ml-2">
+          <ul className="flex flex-col gap-5 text-sm md:text-lg font-light ml-2">
             {links.map((link) => (
-              <li key={link.to}>
+              <li key={link.to} className="mb-1 md:mb-0">
                 <Link
                   to={link.to}
-                  className={`flex items-center gap-3 font-bold transition-colors ${
+                  className={`flex items-center gap-2 md:gap-3 font-bold transition-colors ${
                     location.pathname === link.to
-                      ? "bg-[#3a5230] px-2 py-2 rounded-xl"
+                      ? "bg-[#3a5230] px-1 md:px-2 py-2 rounded-xl"
                       : "hover:text-gray-300"
                   }`}
                   onClick={onClose}
@@ -67,7 +69,7 @@ function FixedSidebar({ isOpen, onClose }) {
             ))}
           </ul>
 
-          <div className="flex items-center gap-3 mt-4">
+          <div className="flex items-center flex-col md:flex-row gap-2 mt-4">
             <img
               src={accountImage}
               alt="Profile Picture"
