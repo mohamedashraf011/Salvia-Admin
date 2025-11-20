@@ -2,11 +2,11 @@ import { useState } from "react";
 import { FaBars } from "react-icons/fa";
 import FixedSidebar from "../../Components/FixedSidebar";
 import skyVideo from "../../assets/videos/sky.mp4";
-import soilImage from "../../assets/images/soil.png";
-import seedsImage from "../../assets/images/seeds.png";
-import leavesImage from "../../assets/images/dried-leaves.png";
-import flowersImage from "../../assets/images/dried-flowers.png";
-import logoImage from "../../assets/images/logo.png";
+import soilImage from "../../assets/Images/Soil.png";
+import seedsImage from "../../assets/Images/seeds.png";
+import leavesImage from "../../assets/Images/dried-leaves.png";
+import flowersImage from "../../assets/Images/dried-flowers.png";
+import logoImage from "../../assets/Images/logo.png";
 import { Link } from "react-router-dom";
 
 function Home() {
